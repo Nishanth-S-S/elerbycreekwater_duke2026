@@ -22,8 +22,7 @@ if st.sidebar.button("About Us"):
 
 # Display selected page
 if st.session_state.page == "Home":
-    st.title("Welcome to Our App")
-    st.write("This is the home page.")
+    print(" ")
 
 elif st.session_state.page == "About Us":
     st.title("About Us")
