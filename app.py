@@ -7,6 +7,32 @@ from prophet import Prophet
 
 st.set_page_config("Water Dashboard", layout="wide")
 
+# Initialize page state
+if "page" not in st.session_state:
+    st.session_state.page = "Home"
+
+# Sidebar navigation
+st.sidebar.title("Navigation")
+
+if st.sidebar.button("Home"):
+    st.session_state.page = "Home"
+
+if st.sidebar.button("About Us"):
+    st.session_state.page = "About Us"
+
+# Display selected page
+if st.session_state.page == "Home":
+    st.title("Welcome to Our App")
+    st.write("This is the home page.")
+
+elif st.session_state.page == "About Us":
+    st.title("About Us")
+    st.write("""
+    To create a website displaying the data collected at specific points along Ellerbe Creek, in order to monitor and create solutions to depollute this contaminated waterway. Ellerbe Creek has been an impaired body of water since 1998, and this poses a significant risk to the local population. Considering the creek flows into Falls Lake Reservoir, the local fresh water source. If we succeed in completing this website to monitor EPA statistics, we can use the data to create imaginative ways to depollute this impaired body. Some constraints include having limited resources and limited time. In conclusion, this website will display data that will be collected at various particular points along Ellerbe Creek to monitor and formulate solutions to the creek to help alleviate the current state of contamination.
+""")
+
+
+
 # These are the columns every CSV needs.
 CSV_FILE = "Data/field_ops_template.csv"
 CODE_VERSION = "simple_app_v1"
