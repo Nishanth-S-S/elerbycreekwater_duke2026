@@ -1,0 +1,33 @@
+collectorName,timestamp,turbidity,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,6/23/2026 17:00,2856.7,NA,120,20.94,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,6/23/2026 17:04,2006.7,NA,122,16.12,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:08:00,1479.60,NA,113,7.56,NA,NA,WALLTOWN_I85_STREAM
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:10:00,1528.80,NA,148,8.44,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:13:00,1056.40,NA,107,8.69,NA,NA,WALLTOWN_I85_STREAM
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:16:00,2145.30,NA,144,9.31,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:18:00,551.70,NA,101,9.75,NA,NA,WALLTOWN_I85_STREAM
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:20:00,2640.60,NA,146,10.13,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:21:00,689.00,NA,120,10.44,NA,NA,WALLTOWN_I85_STREAM
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:23:00,2460.50,NA,144,10.75,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:24:00,495.10,NA,123,11.13,NA,NA,WALLTOWN_I85_STREAM
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Michael Bubeck,2026-06-23 17:26:00,2504.80,NA,145,11.13,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Thomas Hollenkamp,2026-06-23 17:28:00,2287.90,NA,149,11.44,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:30:00,1882.60,NA,155,11.75,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:31:00,2103.60,NA,160,11.69,NA,NA,CAMPUS_POND
+collectorName,timestamp,turbidity_ntu,pH,tds_ppm,water_temp_c,air_temp_c,humidity_pct,site_id
+Trip Jones,2026-06-23 17:32:00,2366.20,NA,152,11.75,NA,NA,CAMPUS_POND

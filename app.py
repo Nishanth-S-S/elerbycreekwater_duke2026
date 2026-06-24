@@ -33,14 +33,16 @@ elif st.session_state.page == "About Us":
 
 
 # These are the columns every CSV needs.
-CSV_FILE = "Data/field_ops_template.csv"
-CODE_VERSION = "simple_app_v1"
-COLS = ["site_id", "timestamp", "tds_ppm", "pH", "turbidity_ntu", "air_temp_c", "water_temp_c", "humidity_pct", "weather_cond"]
-NUMBER_COLS = ["tds_ppm", "pH", "turbidity_ntu", "air_temp_c", "water_temp_c", "humidity_pct", "weather_cond"]
+CSV_FILE = "Data/water_data.csv"
+CODE_VERSION = "water_data_format_v1"
+COLS = ["site_id", "timestamp", "tds_ppm", "turbidity_ntu", "water_temp_c", "weather_cond"]
+NUMBER_COLS = ["tds_ppm", "turbidity_ntu", "water_temp_c", "weather_cond"]
 
 
 def fix_data(data):
     # Make sure the data has the right columns and types.
+    if "turbidity" in data.columns and "turbidity_ntu" not in data.columns:
+        data = data.rename(columns={"turbidity": "turbidity_ntu"})
     data = data.reindex(columns=COLS + ["source"]).copy()
     data["source"] = data["source"].fillna("")
     data["site_id"] = data["site_id"].fillna("").astype(str).str.strip()
@@ -48,6 +50,8 @@ def fix_data(data):
     for col in NUMBER_COLS:
         data[col] = pd.to_numeric(data[col], errors="coerce")
     data = data[data["site_id"] != ""]
+    data = data[data["site_id"].str.lower() != "site_id"]
+    data = data[data["timestamp"].notna()]
     return data.sort_values(["site_id", "timestamp"])
 
 
@@ -66,7 +70,7 @@ def clear_everything():
 
 
 def make_forecast(site_data, col):
-    # Prophet needs at l;east 2 points.
+    # Forecasting needs at least 2 points.
     prophet_data = site_data[["timestamp", col]].dropna()
     prophet_data = prophet_data.rename(columns={"timestamp": "ds", col: "y"})
     prophet_data = prophet_data.groupby("ds", as_index=False)["y"].mean()
@@ -93,28 +97,28 @@ def make_forecast(site_data, col):
         if len(prophet_data) >= 24:
             model.add_seasonality(name="extra_cycle", period=1, fourier_order=8)
         model.fit(prophet_data)
+        fitted = model.predict(prophet_data[["ds"]])
+        errors = prophet_data["y"] - fitted["yhat"]
+        total = ((prophet_data["y"] - prophet_data["y"].mean()) ** 2).sum()
+        r2 = 1 - (errors ** 2).sum() / total if total else None
         future = model.make_future_dataframe(periods=points_to_add, freq=freq, include_history=False)
-        return model.predict(future)
+        forecast = model.predict(future)
+        forecast["r2"] = r2
+        return forecast
     except Exception:
         return pd.DataFrame()
 
 
-def make_chart(site_data, col, title, suffix="", safe_ranges=None, temp_chart=False):
-    # This makes one chart with real points and Prophet points.
+def make_chart(site_data, col, title, suffix="", safe_ranges=None):
+    # This makes one chart with real points and forecast points.
     fig = go.Figure()
 
-    if temp_chart:
-        fig.add_trace(go.Scatter(x=site_data["timestamp"], y=site_data["air_temp_c"], mode="markers", name="Air temp", marker=dict(size=10)))
-        fig.add_trace(go.Scatter(x=site_data["timestamp"], y=site_data["water_temp_c"], mode="markers", name="Water temp", marker=dict(size=10)))
-        for temp_col, name in [("air_temp_c", "Air forecast"), ("water_temp_c", "Water forecast")]:
-            forecast = make_forecast(site_data, temp_col)
-            if not forecast.empty:
-                fig.add_trace(go.Scatter(x=forecast["ds"], y=forecast["yhat"], mode="markers", name=name, marker=dict(size=8, symbol="diamond")))
-    else:
-        fig.add_trace(go.Scatter(x=site_data["timestamp"], y=site_data[col], mode="markers", name=title, marker=dict(size=10)))
-        forecast = make_forecast(site_data, col)
-        if not forecast.empty:
-            fig.add_trace(go.Scatter(x=forecast["ds"], y=forecast["yhat"], mode="markers", name="Prophet forecast", marker=dict(size=8, symbol="diamond")))
+    fig.add_trace(go.Scatter(x=site_data["timestamp"], y=site_data[col], mode="markers", name=title, marker=dict(size=10)))
+    forecast = make_forecast(site_data, col)
+    if not forecast.empty:
+        r2 = forecast["r2"].iloc[0]
+        name = "Forecast" if pd.isna(r2) else f"Forecast (R^2={r2:.2f})"
+        fig.add_trace(go.Scatter(x=forecast["ds"], y=forecast["yhat"], mode="markers", name=name, marker=dict(size=8, symbol="diamond")))
 
     if safe_ranges:
         for low, high, color, label in safe_ranges:
@@ -137,7 +141,7 @@ st.session_state.setdefault("uploads", {})
 st.session_state.setdefault("upload_box_number", 0)
 
 st.title("Water Quality Dashboard")
-st.write("Upload data, edit it like a spreadsheet, and forecast with Facebook Prophet.")
+st.write("Upload data, edit it like a spreadsheet, and forecast future readings.")
 
 # Clear button area.
 if st.button("Clear all data"):
@@ -150,7 +154,8 @@ for file in files:
     key = file.name + str(getattr(file, "size", 0))
     if key not in st.session_state.uploads:
         new_data = pd.read_csv(file)
-        if all(col in new_data.columns for col in COLS):
+        has_columns = all(col in new_data.columns or (col == "turbidity_ntu" and "turbidity" in new_data.columns) for col in COLS)
+        if has_columns:
             new_data["source"] = key
             new_data = fix_data(new_data)
             st.session_state.data = fix_data(pd.concat([st.session_state.data, new_data], ignore_index=True))
@@ -222,10 +227,8 @@ else:
                     (2, 6, "khaki", "Cloudy"),
                     (6, max(8, site_data["turbidity_ntu"].max() + 2), "salmon", "High risk"),
                 ])
-                make_chart(site_data, "pH", "pH", "", [(6.5, 8.5, "lightgreen", "Safe range")])
                 make_chart(site_data, "tds_ppm", "Total Dissolved Solids", " ppm", [
                     (0, 500, "lightgreen", "Safe range"),
                     (500, max(650, site_data["tds_ppm"].max() + 100), "salmon", "High"),
                 ])
-                make_chart(site_data, "", "Air and Water Temperature", " C", temp_chart=True)
-                make_chart(site_data, "humidity_pct", "Humidity", "%")
+                make_chart(site_data, "water_temp_c", "Water Temperature", " C")
